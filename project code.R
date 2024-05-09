@@ -1,4 +1,4 @@
-#Github code 
+#We begin by first loading the necessary packages  
 
 install.packages("MASS")
 install.packages("ggplot2")
@@ -18,7 +18,8 @@ library(mvtnorm)
 
 par(mfrow=c(1,1))
 
-#Solving deterministic ODEs using eulers method
+#Solving deterministic ODEs using eulers method.
+#The function values solves the deterministic ODEs using Eulers method given initial values of suseptoble and infected, parameter values, number of day the wpidemic runs for and dt.
 
 values<-function(theta,dt,t,X0){
   X<-matrix(0,nrow=(t/dt)+1,ncol=2)
@@ -41,8 +42,8 @@ values<-function(theta,dt,t,X0){
 ODEdata<-values(c(exp(-6),0.5),0.01,14,c(762,1))
 ggplot()+geom_line(data=ODEdata,aes(x=time,y=St),color="red", linewidth=0.8)+geom_line(data=ODEdata,aes(x=time,y=It),color="green",linewidth=0.8)+geom_line(data=ODEdata,aes(x=time,y=Rt),color="blue",linewidth=0.8) + xlab("Time") + ylab("Number of individuals") + ggtitle("St, It, Rt simulated using the ODE model")
 
-#Using Gillespies algorithm to generate simulations
-#if the simlation shows that the epidemic dies early it gives us an error message and we need to resimulate the values  
+#The function GAvalues uses Gillespies algorithm to generate simulations of St, It and Rt.
+#if the simlation shows that the epidemic dies early it gives us an error message and we need to resimulate the values.  
 GAvalues<-function(x,N,T,c,S){
   t<-0
   data<-data.frame(St=x[1],It=x[2],Rt=(N-x[1]-x[2]),t=0)
@@ -179,7 +180,7 @@ lines(x=time, y=upper_sd_bound,col="grey")
 lines(x=time, y=lower_sd_bound,col="grey")
 lines(x=m[2],y=m[1],type="p",col="blue")
 
-#Generating simulations using 
+#Generating simulations using CLE method
 CLE<-function(x,N,T,c,dt){
   t<-0
   data<-data.frame(St=x[1],It=x[2],Rt=(N-x[1]-x[2]),t=0)
@@ -267,7 +268,8 @@ p1<-ggplot()+geom_line(data=LNAdata,aes(x=t,y=St),color="red")+geom_line(data=LN
 p2<-ggplot()+geom_line(data=LNA2data,aes(x=t,y=St),color="red")+geom_line(data=LNA2data,aes(x=t,y=It),color="green")+geom_line(data=LNA2data,aes(x=t,y=Rt),color="blue")+xlab("Time after the first case in days")+ylab("Number of individuals")+ggtitle("Simulations of St, It, Rt using LNA algorithm 2")
 grid.arrange(p1, p2, ncol=1)
 
-#Figure 3.1
+                      
+#Figure 3.1 time series graph of observed number of bed bound individuals 
 y<-c(1,3,6,25,73,221,294,257,236,189,125,67,26,10,3)
 t<-c(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14)
 #graph of observed
@@ -275,7 +277,7 @@ par(mfrow=c(1,1))
 plot(y=y,x=t,type="p",xlab="Time",ylab=" Number of infected",col="black",lwd=2,main="Observed data")
 
 #Figure 3.2
-#graph of all simulations
+#graph of It generated through various simulation techniques
 par(mfrow=c(3,2))
 
 #ODEdata<-values(c(exp(-6),0.5),0.01,14,c(762,1))
@@ -422,6 +424,7 @@ newSigma<- ((2.38^2)/3)*var(MHdata)
 system.time(MHdata2<-MH(5000,y,0.01,newSigma,c(-6,log(0.5),2.5),c(762,1)))
 effectiveSize(MHdata2)
 plot(ts(exp(MHdata2)),xlab="Iteration count", main="Trace plots for log(alpha), log(beta) and log(sigma) using optimal tuning matrix")
+
 ##plot with 10000 iterations 
 #figure 3.5
 system.time(MHdata3<-MH(10000,y,0.01,newSigma,c(-6,log(0.5),2.5),c(762,1)))
